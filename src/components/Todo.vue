@@ -122,7 +122,7 @@ computed: {
   position: relative;
  border: 1px solid black;
   width: 50%;
-  margin-left: 60px
+  margin-left:7em;
 }
 
 .todo h2{
