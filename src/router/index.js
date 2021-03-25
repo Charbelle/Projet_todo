@@ -1,20 +1,32 @@
 import { createWebHashHistory, createRouter } from "vue-router";
-import App from '@/views/App.vue'
-import Todo from '@/views/Todo.vue'
+
+import Todo from '@/components/Todo.vue'
+import  Login from '@/components/Login.vue'
+import Register from '@/components/Register'
+
+import { isAuthenticated } from "../store/account/getters";
+
 
 const routes = [
 
+   
+
     {
-        path: '/',
-        name: 'App',
-        component: App
+        path: '/todo/:id',
+        name: 'Todo',
+        component: Todo,
+        meta: { requiresAuth: true }
+        }, 
+    {
+        path: '/login/',
+        name: 'Login',
+        component: Login
 
     },
-
     {
-        path: '/Todo/',
-        name: 'Todo',
-        component: Todo
+        path: '/register/',
+        name: 'Register',
+        component: Register
 
     },
 
@@ -25,4 +37,14 @@ const router = createRouter({
     routes
 })
 
+
+    router.beforeEach((to,from,next) => {
+        if(to.matched.some(route => route.meta.requiresAuth)){
+          if(!isAuthenticated) return next('/login');
+    
+        }
+      
+        next();
+      });
+  
 export default router

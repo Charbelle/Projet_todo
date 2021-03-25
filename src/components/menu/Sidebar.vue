@@ -1,86 +1,280 @@
 <template>
+    <input type="checkbox" name="" id="check">
+    <label for="check">
+      <font-awesomme-icon icon="bars" id="btn" @click="liste()" />
+      <font-awesome-icon icon="times" id="cancel" />
+    </label>
+      <div class="sidebar">
 
-<!-- Side navigation -->
-<div class="sidenav">
+        <header><span class="badge rounded-pill bg-warning">Todo</span><b>App</b></header>
+        <div class="btn btn-warning task" ><span>Vos Listes</span></div>
+        <ul>
+          <li v-for="todo in getTodos" :key="todo.id" @click="tasks(todo.id)">
+            <a><font-awesome-icon icon="tasks" /> {{todo.name }}</a>
+          </li>
+        </ul>
+        <div class="new">
+      
+       <input  v-model="newTodo" > 
+        <button class="btn create" v-on:click="addTodo(newTodo)" >+</button>
+        </div>
+      <a @click="disconnect">Se déconnecter</a>
+      
+          <div class="text-center icon-box" v-if="remaining">
+            <font-awesome-icon id="icon" icon="tasks" /> <p class="counter">{{remaining}} Taches restantes</p> 
+          </div>
+      </div>
 
-    <a href="#" v-for="(element) in list" :key="element.id" list.sync="list">
-
-        {{element.name }} </a>
-        <input v-model="newList" >
-      <button v-on:click="addNewList">Ajouter</button>
-
-</div>
-
-<!-- Page content -->
 
 </template>
 
 <script>
+import {mapGetters, mapActions} from 'vuex'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faTasks,faBars, faTimes,faPlus} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-
-  export default {
-    data()
-    {
-
-    },
-      name: "sidebar",
-      props: 
-        ['list']   ,
-      
+library.add(faTasks)
+library.add(faBars)
+library.add(faTimes)
+library.add(faPlus)
+export default {
+    name: 'Sidebar',
+    data(){
+        return { newTodo : null }
+         },
+         components: {
+           FontAwesomeIcon
+         }
+    ,computed:{
+            ...mapGetters('todo', ['getTodos','remaining']),
+              ...mapGetters("account",["getToken"]),
+            },
     methods:{
-      addNewList: function () {
-       let id= this.list.length+1
+       ...mapActions('todo', ['createTodoList','loadTodolists']),
+       ...mapActions('account', ['logout']),
      
- 
-      this.list.push({
-        id: id,
-        name: this.newList
-      })
-      this.NewList = ''
-          }
-    }
    
-  }
- 
+          addTodo(data){
+               
+                    this.$store.dispatch('todo/createTodolist',{name:data,token:this.getToken}); 
+            },
+          tasks(index) {
+          
+              this.$router.push({ name: 'Todo', params: { id: index}});
+            }, 
+           disconnect(){
+              this.$router.push( {path:'/'});
+             this.logout();
+            
+           },
+           liste() {
+            this.loadTodolists({token:this.getToken});
+    },       
+    },
+}
 </script>
 
 <style>
 /* The sidebar menu */
-.sidenav {
-  height: 100%; /* Full-height: remove this if you want "auto" height */
-  width: 160px; /* Set the width of the sidebar */
-  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-  z-index: 1; /* Stay on top */
-  top: 0; /* Stay at the top */
-  left: 0;
-  background-color: #111; /* Black */
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 20px;
+.task{
+margin-left: 30px;
+color: white;
+}
+.sidebar {
+  height: 100%; 
+  width: 14%; 
+  position: fixed;
+  z-index: 1; 
+  left: -14%;
+  background-color:rgb(179, 195, 245); 
+  overflow-x: hidden;
+  color: white;
+  transition: all .5s ease;
+}
+label #btn{
+  left: 40px;
+  top:25px;
+  font-size: 35px;
+  padding: 6px 12px;
 }
 
-/* The navigation menu links */
-.sidenav a {
-  padding: 6px 8px 6px 16px;
+
+ul{
+  list-style: none;
   text-decoration: none;
-  font-size: 25px;
-  color: #818181;
+}
+li{
+  margin: 0;
+  padding: 0;
+}
+#check :checked ~ .sidebar{
+  left: 0;
+}
+
+.sidebar ul li:hover a{
+padding-left: 20px;
+}
+
+.sidebar header{
+  
+    width: 100%;
+    font-size: 22px;
+    text-align: center;
+    color: white;
+    line-height: 60px;
+    background-color: rgb(187, 143, 204);
+    user-select: none;
+  
+}
+
+
+label #btn{
+  position:absolute;
+  cursor:pointer;
+  border-radius: 3px;
+  margin: 15px 30px;
+  font-size: 29px;
+  height: 45px;
+  width: 45px;
+  background-color: rgb(143, 142, 184);
+  text-align: center;
+  line-height: 45px;
+  transition: all .5s ease;
+  padding-top: 5px;
+  
+} 
+label #cancel{
+  position:absolute;
+  cursor:pointer;
+  background-color: rgb(233, 199, 199);
+  border-radius: 3px;
+  margin: 15px 30px;
+  font-size: 29px;
+  height: 45px;
+  width: 45px;
+  text-align: center;
+  line-height: 45px;
+  transition: all .5s ease;
+
+}
+#check{
+display: none;
+}
+.new {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  border-bottom: 1px solid currentColor;
+  font-size: inherit;
+  outline: none;
+  padding: 0.25em;
+  transition: border-bottom 150ms ease-in;
+  order: 2;
+}
+
+
+#check:checked ~ .sidebar{
+  left: 0;
+}
+
+/* sidebar elements */
+.sidebar  a{
+  padding-top: 5px;
+  text-decoration: none;
+  font-size: 20px;
+  color:white;
   display: block;
+  height:55px;
+  width: 100%;
+  line-height:45px;
+  box-sizing:border-box;
+  border-top:1px solid rgba(255,255,255,.1);
+  border-bottom: 1px solid white;
+  padding-left: 10px;
+  border-left: 5px solid transparent;
+  transition: all .5s ease;
+}
+font-awesome-icon{
+  font-size: 23px;
+  margin-right: 16px;
+}
+.sidebar a span{
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+#check{
+  display: none;
 }
 
-/* When you mouse over the navigation links, change their color */
-.sidenav a:hover {
-  color: #f1f1f1;
+label #cancel{
+  opacity: 0;
+  visibility: hidden;
 }
 
-/* Style page content */
-.main {
-  margin-left: 160px; /* Same as the width of the sidebar */
-  padding: 0px 10px;
+#check:checked ~ label #btn{
+  margin-left:0%;
+  opacity: 1;
+  visibility: visible;
+}
+#check:checked ~ label #cancel{
+  margin-left:15%;
+  opacity: 1;
+  visibility: visible;
+}
+@media(max-width : 860px){
+  .sidebar{
+    height: auto;
+    width: 70px;
+    left: 0;
+    margin: 100px 0;
+  }
+  header,#btn,#cancel{
+    display: none;
+  }
+  span{
+    position: absolute;
+    margin-left: 23px;
+    opacity: 0;
+    visibility: hidden;
+  }
+  .sidebar a{
+    height: 60px;
+  }
+  .sidebar a i{
+    margin-left: -10px;
+  }
+  a:hover {
+    width:15%;
+    background: inherit;
+  }
+  .sidebar a:hover span{
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .counter-section{
+    margin:10% auto;
+    color: rgb(231, 222, 93);
+  
+  }
+  .icon-box{
+    border: 3px solid rgb(231, 222, 93);
+    height: 50px;
+    width:50px;
+    transform: rotate(35deg);  
+    margin: 15px auto;
+    font-size: 50px;
+    }
+    #icon{
+  font-size:35px;
+  margin: 30px auto;
+   color: rgb(231, 222, 93);
+     transform: rotate(-35deg);  
+    }
+    
 }
 
-/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
-@media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
-}
+
+
 </style>

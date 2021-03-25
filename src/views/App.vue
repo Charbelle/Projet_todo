@@ -1,121 +1,83 @@
 <template>
 
-  <div>
-  <div class="sidenav">
-
-    <a href="#" v-for="(element) in list" :key="element.id" list.sync="list">
-
-        {{element.name }} </a>
-        <input v-model="newList" >
-      <button v-on:click="addNewList">Ajouter</button>
-       <router-link to="/todo">Todo de base</router-link>
-
-</div>
-<div class="main">
-<router-view/>
+<div class="container-fluid">
+  <div class="main">
+ 
+ <div v-if="isAuthenticated" >
+   <Sidebar />
+ <router-view  />
+ </div>
   
+    <Login v-else/>
+
+   
 </div>
 </div>
 
 </template>
 
 <script>
-
-
-
+import Login from '@/views/Login'
+import Sidebar from '@/components/menu/Sidebar'
+import {mapActions, mapGetters} from 'vuex';
 export default {
   name: 'App',
- 
-   data() {
-
-return{
-list: [
-{
-id: 1,
-name : 'tache 1',
-},
-{
-id: 2,
-name : 'tache 2',
-
+  data(){
+    return {
+      id:null,
+    }},
+components:{
+ Login,Sidebar
 }
-]
 ,
-newList: '',
-filter: 'all',
-}
-  },
+  methods: {
+    ...mapActions("todo",["login"]),
+   register(){
 
-
-methods: {
-
-supp(element){
- 
- this.list.splice(element,1)
-
-},
-addNewList: function () {
-       let id= this.list.length+1
-     
-      this.list.push({
-        id: id,
-        name: this.newList
-      })
-      this.NewList = ''
+     this.$store.dispatch('account/login',{password:"motdepasse",email:"exampleelh@toto.com"});
+    },
+    todo()
+    {
+      this.$store.dispatch('account/accountInformation',{token:this.getToken})
     }
-
-},  
-computed: {
- filtre(){
-   return this.todos.filter()
- }
-
-}
-
-
-
+  },
+  computed: {
+    ...mapGetters("account",["getToken","isAuthenticated"])
+  },
+  
+  
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-/* The sidebar menu */
-.sidenav {
-  height: 100%; /* Full-height: remove this if you want "auto" height */
-  width: 160px; /* Set the width of the sidebar */
-  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-  z-index: 1; /* Stay on top */
-  top: 0; /* Stay at the top */
-  left: 0;
-  background-color:wheat; /* Black */
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 20px;
-}
-
-/* The navigation menu links */
-.sidenav a {
-  padding: 6px 8px 6px 16px;
-  text-decoration: none;
-  font-size: 25px;
-  color: #818181;
-  display: block;
-}
-
-/* When you mouse over the navigation links, change their color */
-.sidenav a:hover {
-  color: #f1f1f1;
-}
-
-/* Style page content */
+<style >
 .main {
   margin-left: 160px; /* Same as the width of the sidebar */
   padding: 0px 10px;
 }
+.add{
 
-/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
-@media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
+  width: 100%;
+  display: flex;
+  padding: 10px 0;
+}
+
+.add > input[type="text"]{
+
+  width: 90%;
+  color: yellow;
+  border: none;
+  border-bottom: 2px solid black;
+  padding: 10px;
+  font-size: 22px;
+  outline: none;
+}
+
+.add{
+ margin: O 10px;
+ font-size: 18px;
+ border: none;
+ padding: 10px;
+ outline: none;
+
 }
 </style>
-
