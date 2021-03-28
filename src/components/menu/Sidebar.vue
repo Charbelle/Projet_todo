@@ -1,28 +1,36 @@
 <template>
+
+    <!--Boutons permettant de faire apparaitre et disparaitre la sidebar -->.
     <input type="checkbox" name="" id="check">
     <label for="check">
       <font-awesomme-icon icon="bars" id="btn" @click="liste()" />
       <font-awesome-icon icon="times" id="cancel" />
     </label>
-      <div class="sidebar">
 
+    <div class="sidebar">
         <header><span class="badge rounded-pill bg-warning">Todo</span><b>App</b></header>
         <div class="btn btn-warning task" ><span>Vos Listes</span></div>
+         
+        <!--Affichage des listes -->.
         <ul>
           <li v-for="todo in getTodos" :key="todo.id" @click="tasks(todo.id)">
             <a><font-awesome-icon icon="tasks" /> {{todo.name }}</a>
           </li>
-        </ul>
+        </ul>  
+
+        <!--Champ d'ajout d'une liste-->.
         <div class="new">
-      
-       <input  v-model="newTodo" > 
+        <input  v-model="newTodo" > 
         <button class="btn create" v-on:click="addTodo(newTodo)" >+</button>
         </div>
-      <a @click="disconnect">Se déconnecter</a>
+
+        <a @click="disconnect">Se déconnecter</a>
       
-          <div class="text-center icon-box" v-if="remaining">
-            <font-awesome-icon id="icon" icon="tasks" /> <p class="counter">{{remaining}} Taches restantes</p> 
-          </div>
+        <!--Compteur global de todos-->.
+        <div class="text-center icon-box" >
+          <font-awesome-icon id="icon" icon="tasks" /> <p class="counter">{{remaining}} Taches restantes</p> 
+        </div>
+        
       </div>
 
 
@@ -34,10 +42,12 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTasks,faBars, faTimes,faPlus} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
+//importation d'icones 
 library.add(faTasks)
 library.add(faBars)
 library.add(faTimes)
 library.add(faPlus)
+
 export default {
     name: 'Sidebar',
     data(){
@@ -58,16 +68,17 @@ export default {
           addTodo(data){
                
                     this.$store.dispatch('todo/createTodolist',{name:data,token:this.getToken}); 
+                    this.newTodo='';
             },
           tasks(index) {
-          
               this.$router.push({ name: 'Todo', params: { id: index}});
             }, 
            disconnect(){
-              this.$router.push( {path:'/'});
-             this.logout();
+            this.$router.push( {path:'/'});
+            this.logout();
             
            },
+           //récupération des liste depuis l'api
            liste() {
             this.loadTodolists({token:this.getToken});
     },       
@@ -76,11 +87,6 @@ export default {
 </script>
 
 <style>
-/* The sidebar menu */
-.task{
-margin-left: 30px;
-color: white;
-}
 .sidebar {
   height: 100%; 
   width: 14%; 
@@ -92,6 +98,44 @@ color: white;
   color: white;
   transition: all .5s ease;
 }
+.sidebar ul li:hover a{
+padding-left: 20px;
+}
+
+.sidebar header{
+  
+    width: 100%;
+    font-size: 22px;
+    text-align: center;
+    color: white;
+    line-height: 60px;
+    background-color: rgb(187, 143, 204);
+    user-select: none;
+  
+}
+/* elements de la sidebar */
+.sidebar  a{
+  padding-top: 5px;
+  text-decoration: none;
+  font-size: 20px;
+  color:white;
+  display: block;
+  height:55px;
+  width: 100%;
+  line-height:45px;
+  box-sizing:border-box;
+  border-top:1px solid rgba(255,255,255,.1);
+  border-bottom: 1px solid white;
+  padding-left: 10px;
+  border-left: 5px solid transparent;
+  transition: all .5s ease;
+}
+
+.task{
+margin-left: 30px;
+color: white;
+}
+
 label #btn{
   left: 40px;
   top:25px;
@@ -112,21 +156,6 @@ li{
   left: 0;
 }
 
-.sidebar ul li:hover a{
-padding-left: 20px;
-}
-
-.sidebar header{
-  
-    width: 100%;
-    font-size: 22px;
-    text-align: center;
-    color: white;
-    line-height: 60px;
-    background-color: rgb(187, 143, 204);
-    user-select: none;
-  
-}
 
 
 label #btn{
@@ -178,23 +207,7 @@ display: none;
   left: 0;
 }
 
-/* sidebar elements */
-.sidebar  a{
-  padding-top: 5px;
-  text-decoration: none;
-  font-size: 20px;
-  color:white;
-  display: block;
-  height:55px;
-  width: 100%;
-  line-height:45px;
-  box-sizing:border-box;
-  border-top:1px solid rgba(255,255,255,.1);
-  border-bottom: 1px solid white;
-  padding-left: 10px;
-  border-left: 5px solid transparent;
-  transition: all .5s ease;
-}
+
 font-awesome-icon{
   font-size: 23px;
   margin-right: 16px;
@@ -274,7 +287,5 @@ label #cancel{
     }
     
 }
-
-
 
 </style>

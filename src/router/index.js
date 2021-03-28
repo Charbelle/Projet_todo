@@ -9,8 +9,6 @@ import { isAuthenticated } from "../store/account/getters";
 
 const routes = [
 
-   
-
     {
         path: '/todo/:id',
         name: 'Todo',
@@ -37,7 +35,7 @@ const router = createRouter({
     routes
 })
 
-
+     //protection de routes
     router.beforeEach((to,from,next) => {
         if(to.matched.some(route => route.meta.requiresAuth)){
           if(!isAuthenticated) return next('/login');

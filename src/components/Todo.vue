@@ -1,20 +1,26 @@
 <template>
 
   <div class="todo">
- 
+   <!--Nom de la liste, bouton supprimer-->.
     <h2>{{title}}  <button  v-on:click="removeTodo"> <font-awesome-icon icon="trash"></font-awesome-icon></button></h2> 
+    
+    <!-- Compteur de Todos -->.
     <label>{{uncompleted}}</label>
  
-   
+      <!--filtres -->.
       <select class="form-select" v-model="filter">
           <option value='all'>Toutes vos taches </option>
           <option value='todo'> a faire </option>
           <option value='done'> Faites </option>
       </select>
+
+     <!--Champ d'ajout d'un tache(todo) -->.
     <div class="input">
       <input class= "form-control" v-model="newTask" @keyup.enter="addTask" placeholder="Ajouter nouvelle tache" >
-     <button  v-on:click="addTask"><font-awesome-icon icon="plus"></font-awesome-icon></button>
+      <button  v-on:click="addTask"><font-awesome-icon icon="plus"></font-awesome-icon></button>
     </div>
+    
+
     <div class ="content">
       <ul id="todo" class ="list-group list-group-flush" >
         <li class="list-group-item " v-for="task  in filtered" :key="task.id" >
@@ -22,11 +28,12 @@
               <input class="form-check-input"  reuired type="checkbox" @click="completeTask(task)" v-if="task.completed==1" checked >
               <input type="checkbox" @click="completeTask(task)" v-else >  
               <p>{{task.name}}</p>  <span> </span>
-           </label>
+          </label>
             
-               <span class="remove" v-on:click="removeTask(task)"><font-awesome-icon icon="trash"></font-awesome-icon></span>
-           <label for="newTodo">Modifier une tache</label>
-           <input class= "form-control" type="text" placeholder="Appuyez sur entrer pour enregistrer" v-model="task.name" @keyup.enter="edit(task)" >
+          <span class="remove" v-on:click="removeTask(task)"><font-awesome-icon icon="trash"></font-awesome-icon></span>
+           
+          <label for="newTodo">Modifier une tache</label>
+          <input class= "form-control" type="text" placeholder="Appuyez sur entrer pour enregistrer" v-model="task.name" @keyup.enter="edit(task)" >
       
         </li>
 
@@ -41,6 +48,8 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTrash,faPlus} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+//ajout des icones
 library.add(faTrash)
 library.add(faPlus)
 import {mapGetters} from 'vuex'
@@ -57,16 +66,24 @@ return {newTitle:"",filter:'all'}
               this.$store.dispatch('todo/createTodo',{liste:this.$route.params.id,name:this.newTask,bool:0,token:this.getToken});
               this.newTask=""
             },
+
+            //fonction completer todo
             completeTask(task){
-            let bool=1;
-            if (task.completed==1)
+            //1 si tache complete, 0 sinon
+            let bool=1; // initialisation à car par défaut on considère que la tache est incomplete
+
+            if (task.completed==1) //la tache est complete, on passe la valeur de bool à 1
               bool=0;
+
             this.$store.dispatch('todo/completeTodo',{liste:this.$route.params.id,name:task.name,bool:bool,token:this.getToken,id:task.id});
             },
+ 
+             //retirer une liste 
             removeTodo(){
                 this.$store.dispatch('todo/deleteTodolist',{id:this.$route.params.id,token:this.getToken});
                  this.$router.push({path:'/'})
             },
+             //retirer une tache 
             removeTask(task){
              this.$store.dispatch('todo/deleteTodo',{id:task.id,token:this.getToken,liste:this.$route.params.id});
             },
@@ -79,9 +96,11 @@ return {newTitle:"",filter:'all'}
 computed: {
      ...mapGetters('todo', ['tasks','taskName','subremaining','todo','done']),
      ...mapGetters('account',['getToken']),
+       
+        //filtrages des todos suivant la valeur du paramètre filter
         filtered()
        {
-         console.log(this.taskName)
+         
         if(this.filter=="todo")
           return this.todo(this.$route.params.id)
         else if(this.filter=="done")
@@ -89,11 +108,14 @@ computed: {
         else
           return this.tasks(this.$route.params.id)
      },
+
+      //titre de la todo
      title()
      {
-   
        return this.taskName(this.$route.params.id)
      },
+
+      //compteur des todos
      uncompleted()
      {
       let nb= this.subremaining(this.$route.params.id);
@@ -106,9 +128,6 @@ computed: {
      }
   
     },
-  
-    
-
 } 
 
 </script>

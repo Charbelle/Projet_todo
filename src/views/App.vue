@@ -1,11 +1,11 @@
 <template>
-
+{{isAuthenticated}}
 <div class="container-fluid">
   <div class="main">
  
  <div v-if="isAuthenticated" >
    <Sidebar />
- <router-view  />
+ <router-view />
  </div>
   
     <Login v-else/>
@@ -33,13 +33,9 @@ components:{
   methods: {
     ...mapActions("todo",["login"]),
    register(){
-
      this.$store.dispatch('account/login',{password:"motdepasse",email:"exampleelh@toto.com"});
     },
-    todo()
-    {
-      this.$store.dispatch('account/accountInformation',{token:this.getToken})
-    }
+ 
   },
   computed: {
     ...mapGetters("account",["getToken","isAuthenticated"])

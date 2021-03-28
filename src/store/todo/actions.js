@@ -2,7 +2,7 @@
  import axios from 'axios';
 
 
-
+ //chargemet des todolistes
  export function loadTodolists({commit},data)
  {
      axios.get('http://138.68.74.39/api/todolists',{headers:{'Authorization':'Bearer '+data.token}})
@@ -25,6 +25,7 @@
     .then(commit('removeTodo',data.id))
     
  }
+ 
 /* export function loadTodos({commit},data)
  {
     axios.get('http://138.68.74.39/api/todos/'+data.id,{headers:{'Authorization':'Bearer '+data.token}})

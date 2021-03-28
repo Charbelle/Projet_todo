@@ -12,6 +12,7 @@ export function register({commit}, data) {
         })
 } 
 
+ //récuperer les informations d'un utilisateur
 export function accountInformation({commit},data)
 {
     
@@ -36,6 +37,5 @@ export function login({commit}, data) {
 
 export function logout({commit})
 {
- 
     commit("logout")
 }
